@@ -7,10 +7,10 @@ class hyperGradLoss:
 
     def __init__ (self, X, theta):
         self.examples = X
-        self.centroid = theta
-        self.loss = computeLoss()
-        self.gradAmbient = computeAmbient()
-        self.gradTangent = computeTangent()
+        self.centroid = theta.reshape((X.shape[1],-1))
+        self.loss = self.computeLoss()
+        self.gradAmbient = self.computeAmbient()
+        #self.gradTangent = computeTangent()
 
     def computeAmbient(self):
         """
@@ -26,6 +26,7 @@ class hyperGradLoss:
         Compute the gradient in the tangent space, Eq. (5).
         :return: ? np array k X 1 ?
         """
+        return
 
 
 
@@ -34,6 +35,7 @@ class hyperGradLoss:
         Sum of the distances between the points and the current centroid, in hyperbolic space.
         :return: scalar, which is the sum of the distances from the centroid to each of the points.
         """
-        return sum(-np.arccosh(minkowskiArrayDot(self.examples, self.centroid)))
+        return sum(np.arccosh(-minkowskiArrayDot(self.examples, self.centroid)))[0]
+        #return(-minkowskiArrayDot(self.examples, self.centroid))
 
 

@@ -1,6 +1,7 @@
 
 import numpy as np
 import math
+import copy
 
 def generatePoints (N, k = 2):
     """
@@ -13,10 +14,19 @@ def generatePoints (N, k = 2):
     rands = [[np.random.rand() for j in range(k)] for i in range(N)]
     point_list = []
     for rand in rands:
-        lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
+        #lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
+        lastItem = math.sqrt(1 + np.dot(rand, rand))
         rand.append(lastItem)
         point_list.append(rand)
     return np.array(point_list)
+
+def randTheta(k):
+    """
+    Generates a random point on the hyperboloid
+    :param k:
+    :return: k + 1 X 1 array
+    """
+    return generatePoints(1, k)[0].reshape((k + 1, -1))
 
 def minkowskiDot(point1, point2):
     point1 = list(point1)
@@ -25,14 +35,16 @@ def minkowskiDot(point1, point2):
 
 def minkowskiArrayDot(X, vec):
     """
-    Computes the minkowski dot between N x K array and 1 x k vector. We multiply the last column of X by -1,
+    Computes the minkowski dot between N x K array and  vector. We multiply the last column of X by -1,
     then do normal matrix multiplication.
-    :param array:
-    :param vec:
-    :return:
+    :param array: N x k array
+    :param vec: vector- reshaped to k X 1 for the matrix multiplication.
+    :return: N x 1 array
     """
-    X[:,-1] *= -1
-    return np.matmul(X,vec)
+    k = X.shape[1]
+    vec = vec.reshape((k, -1))
+    X[:, -1] *= -1
+    return np.matmul(X, vec)
 
 
 def hyperboloidDist(point1, point2):
@@ -42,9 +54,20 @@ def hyperboloidDist(point1, point2):
     :param point2:
     :return: Distance on the hyperboloid between the points.
     """
-    return math.acosh(-minkowskiDot(point1,point2))
+    return np.arccosh(-minkowskiDot(point1, point2))
 
 if __name__ == "__main__":
     points = generatePoints(2)
-    print(hyperboloidDist(points[0], points[1]))
+    #print(points[0])
+    b = copy.deepcopy(points[0])
+    #b[:,-1] *= -1
+    #print(b)
+    #print(np.dot(points[0], points[0]))
+    #print(-minkowskiDot(points[0], points[0]))
+    #print(hyperboloidDist(points[0], points[0]))
+    newpoint = b.reshape((points[0].shape[0],-1))
+    #print(newpoint)
+    print(newpoint.T[0])
+    print(np.arccos(-minkowskiArrayDot(newpoint.T, points[0])))
+    print(randTheta(2))
 
