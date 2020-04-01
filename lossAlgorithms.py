@@ -5,12 +5,12 @@ from utilities import minkowskiArrayDot
 
 class hyperGradLoss:
 
-    def __init__ (self, X, theta)
-    self.examples = X
-    self.centroid = theta
-    self.loss = computeLoss()
-    self.gradAmbient = computeAmbient()
-    self.gradTangent = computeTangent()
+    def __init__ (self, X, theta):
+        self.examples = X
+        self.centroid = theta
+        self.loss = computeLoss()
+        self.gradAmbient = computeAmbient()
+        self.gradTangent = computeTangent()
 
     def computeAmbient(self):
         """

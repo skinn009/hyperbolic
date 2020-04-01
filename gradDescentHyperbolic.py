@@ -6,7 +6,8 @@ from utilities import generatePoints
 from lossAlgorithms import hyperGradLoss
 
 
-def hyperGradDescent(loss_object, theta, maxEvals = 25, alpha, X, verbosity = True):
+def hyperGradDescent(loss_object, theta, maxEvals , alpha, X, verbosity = True):
+    return
 
 
 
