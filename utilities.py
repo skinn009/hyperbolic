@@ -1,12 +1,12 @@
-
 import numpy as np
 import math
 import copy
 
-def generatePoints (N, k = 2):
+
+def generatePoints(N, k=2):
     """
     We generate N points on the hyperboloid satisfying the equation . If we are in H^2,
-    We get random numbers for x1, x2, and compute for x3 where x3 = sqrt(1 = x1^2 + x2^2).
+    We get random numbers for x1, x2, and compute for x3 where x3 = sqrt(1 + x1^2 + x2^2).
     Here, x3 represents the "height" of the point, in Minkowski space. So, the points are in H^2 on the hyperboloid.
     :param N:
     :return: numpy array of dimension N x k+1.
@@ -14,11 +14,12 @@ def generatePoints (N, k = 2):
     rands = [[np.random.rand() for j in range(k)] for i in range(N)]
     point_list = []
     for rand in rands:
-        #lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
+        # lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
         lastItem = math.sqrt(1 + np.dot(rand, rand))
         rand.append(lastItem)
         point_list.append(rand)
     return np.array(point_list)
+
 
 def randTheta(k):
     """
@@ -28,10 +29,12 @@ def randTheta(k):
     """
     return generatePoints(1, k)[0].reshape((k + 1, -1))
 
+
 def minkowskiDot(point1, point2):
     point1 = list(point1)
     point2 = list(point2)
-    return sum([point1[i] * point2[i] for i in range(len(point1)-1)]) - point1[-1] * point2[-1]
+    return sum([point1[i] * point2[i] for i in range(len(point1) - 1)]) - point1[-1] * point2[-1]
+
 
 def minkowskiArrayDot(X, vec):
     """
@@ -56,18 +59,32 @@ def hyperboloidDist(point1, point2):
     """
     return np.arccosh(-minkowskiDot(point1, point2))
 
+
+def exponentialMap(p, v):
+    """
+    Compute the exponential map at p in H^n for some point v. Exponential maps a point v from the tangent space
+    back onto the hyperboloid.
+
+    :param p: point to compute exponential map at
+    :param v: input to exponential map
+    :return: Point on H^k which corresponds to the exponential map at p evaluated at v.
+    """
+    norm_v = np.linalg.norm(v)
+    return np.cosh(norm_v) * p + np.sinh(norm_v) * (1 / norm_v) * v
+
+
 if __name__ == "__main__":
     points = generatePoints(2)
-    #print(points[0])
+    # print(points[0])
     b = copy.deepcopy(points[0])
-    #b[:,-1] *= -1
-    #print(b)
-    #print(np.dot(points[0], points[0]))
-    #print(-minkowskiDot(points[0], points[0]))
-    #print(hyperboloidDist(points[0], points[0]))
-    newpoint = b.reshape((points[0].shape[0],-1))
-    #print(newpoint)
+    # b[:,-1] *= -1
+    # print(b)
+    # print(np.dot(points[0], points[0]))
+    # print(-minkowskiDot(points[0], points[0]))
+    # print(hyperboloidDist(points[0], points[0]))
+    newpoint = b.reshape((points[0].shape[0], -1))
+    print('exp map', exponentialMap(points[0], points[1]))
+    # print(newpoint)
     print(newpoint.T[0])
     print(np.arccos(-minkowskiArrayDot(newpoint.T, points[0])))
     print(randTheta(2))
-

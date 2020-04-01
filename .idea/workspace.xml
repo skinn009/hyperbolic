@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2806c427-a4f9-40be-9259-eb7e3d6ee232" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/gradDescentHyperbolic.py" beforeDir="false" afterPath="$PROJECT_DIR$/gradDescentHyperbolic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/hyperbolic.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/hyperbolic.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lossAlgorithms.py" beforeDir="false" afterPath="$PROJECT_DIR$/lossAlgorithms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +34,8 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.gradDescentHyperbolic">
@@ -47,6 +51,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gradDescentHyperbolic.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -68,6 +73,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utilities.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -86,6 +92,20 @@
   </component>
   <component name="SvnConfiguration">
     <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2806c427-a4f9-40be-9259-eb7e3d6ee232" name="Default Changelist" comment="" />
+      <created>1585770685743</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1585770685743</updated>
+      <workItem from="1585770686816" duration="1510000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
     <state x="364" y="49" key="CommitChangelistDialog2" timestamp="1585691688342">
@@ -108,6 +128,10 @@
       <screen x="0" y="23" width="1440" height="834" />
     </state>
     <state width="1379" height="195" key="GridCell.Tab.0.right/0.23.1440.834@0.23.1440.834" timestamp="1585758622560" />
+    <state x="502" y="287" key="SettingsEditor" timestamp="1585770705495">
+      <screen x="65" y="24" width="1855" height="1176" />
+    </state>
+    <state x="502" y="287" key="SettingsEditor/65.24.1855.1176@65.24.1855.1176" timestamp="1585770705495" />
     <state x="405" y="181" key="search.everywhere.popup" timestamp="1585687360906">
       <screen x="0" y="23" width="1440" height="834" />
     </state>
