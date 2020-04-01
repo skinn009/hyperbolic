@@ -36,6 +36,6 @@ class hyperGradLoss:
         :return: scalar, which is the sum of the distances from the centroid to each of the points.
         """
         return sum(np.arccosh(-minkowskiArrayDot(self.examples, self.centroid)))[0]
-        #return(-minkowskiArrayDot(self.examples, self.centroid))
+
 
 
