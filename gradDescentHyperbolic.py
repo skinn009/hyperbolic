@@ -2,6 +2,7 @@ import numpy as np
 from utilities import hyperboloidDist
 from utilities import minkowskiDot
 from utilities import generatePoints
+from utilities import randTheta
 import copy
 
 from lossAlgorithms import hyperGradLoss
@@ -32,7 +33,8 @@ if __name__ == "__main__":
     points = generatePoints(2)
     print(points)
     print(hyperboloidDist(points[0], points[1]))
-    theta = copy.deepcopy(points[0])
+    #theta = copy.deepcopy(points[0])
+    theta = randTheta(2)
     obj = hyperGradLoss(points, theta)
     print(obj.centroid)
     print(obj.loss)

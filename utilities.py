@@ -24,7 +24,7 @@ def generatePoints(N, k=2):
 def randTheta(k):
     """
     Generates a random point on the hyperboloid
-    :param k:
+    :param k: 2 for these experiments
     :return: k + 1 X 1 array
     """
     return generatePoints(1, k)[0].reshape((k + 1, -1))
@@ -86,5 +86,5 @@ if __name__ == "__main__":
     print('exp map', exponentialMap(points[0], points[1]))
     # print(newpoint)
     print(newpoint.T[0])
-    print(np.arccos(-minkowskiArrayDot(newpoint.T, points[0])))
+    print(np.arccosh(-minkowskiArrayDot(newpoint.T, points[0])))
     print(randTheta(2))
