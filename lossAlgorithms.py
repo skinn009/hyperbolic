@@ -22,7 +22,7 @@ class hyperGradLoss:
         # compute grad in tangent space
         self.gradTangent = self.computeTangent()
         # now do gradient update on the hyperboloid
-        self.centroid = self.gradientUpdate()
+        #self.centroid = self.gradientUpdate()
 
     def computeAmbient(self):
         """
