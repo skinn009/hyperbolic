@@ -2,14 +2,11 @@ import numpy as np
 import copy
 import numpy.linalg as la
 
-from utilities import hyperboloidDist
-from utilities import minkowskiDot
-from utilities import generatePoints
-from utilities import randTheta
-from lossAlgorithms import hyperGradLoss
+from utilities import hyperboloidDist, minkowskiDot, generatePoints, randTheta, plot_loss
+from lossAlgorithms import HyperGradLoss
 
 
-def hyperGradDescent(loss_object, theta, maxEvals , alpha, X, verbosity = True):
+def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
     """
     This is where we iteratively learn the centroid of the points. In this method, we will stick with constant alpha.
     :param loss_object: this is the name of the loss function in lossAlgorithms.py, where the gradient and loss is
@@ -24,51 +21,54 @@ def hyperGradDescent(loss_object, theta, maxEvals , alpha, X, verbosity = True):
     its = 1
     loss_values = []
     centroid_list = []
-    grad_inf_norm = 1 # norm of difference between current centroid and previous centroid
+    grad_inf_norm = 1  # norm of difference between current centroid and previous centroid
     prev_centroid = theta
     centroid_list.append(theta)
     while grad_inf_norm > 1e-5 and its <= maxEvals:
         curr_obj = loss_object(X, theta)
-        #print("loss", curr_obj.loss)
-        theta = exponentialMap(-alpha*curr_obj.gradTangent, curr_obj.centroid)
-        #print("theta", theta)
-        #diff_inf_norm = la.norm(prev_centroid - theta, np.inf)
+        # print("loss", curr_obj.loss)
+        theta = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
+        # print("theta", theta)
+        # diff_inf_norm = la.norm(prev_centroid - theta, np.inf)
         grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
+
         if verbosity == True and its% 10 == 0:
             print(its, curr_obj.loss, grad_inf_norm, curr_obj.centroid.T)
         #print(its, curr_obj.loss, curr_obj.centroid.T)
+        # if verbosity == True: # and its% 10 == 0:
+        # print(its, curr_obj.loss, diff_inf_norm, curr_obj.centroid.T)
+
         its += 1
         prev_centroid = theta
     return loss_values, centroid_list
 
 
 def exponentialMap(grad, p):
+    """
+    Compute the exponential map at p in H^n for some point grad. Exponential maps a point grad from the tangent space
+    back onto the hyperboloid.
+
+    :param grad: input to exponential map
+    :param p: point to compute exponential map at
+    :return: Point on H^k which corresponds to the exponential map at p evaluated at grad.
+    """
     g_norm = la.norm(grad)
-    return np.cosh(g_norm)*p + np.sinh(g_norm) * grad/g_norm
-
-
-
+    return np.cosh(g_norm) * p + np.sinh(g_norm) * grad / g_norm
 
 
 if __name__ == "__main__":
     points = generatePoints(5)
     print(points)
-    #print(hyperboloidDist(points[0], points[1]))
-    #theta = copy.deepcopy(points[0])
+    # print(hyperboloidDist(points[0], points[1]))
+    # theta = copy.deepcopy(points[0])
     theta = randTheta(2)
-    #obj = hyperGradLoss(points, theta)
-    """
-    #To compute mean interations till convergence.
-    conversion_its = []
-    for i in range(500):
-        points = generatePoints(10)
-        loss_list, centroid_list = hyperGradDescent(hyperGradLoss, theta, 250, 0.01, points, True)
-        conversion_its.append(len(centroid_list))
-    print(sum(conversion_its)/len(conversion_its))
-    """
-    _, centroid_list = hyperGradDescent(hyperGradLoss, theta, 1000, 0.01, points, True)
+
+    # obj = HyperGradLoss(points, theta)
+
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 500, 0.1, points, True)
+    plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
     cent = centroid_list[-1]
     dist_list = []
     for point in points:
