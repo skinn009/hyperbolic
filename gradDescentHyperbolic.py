@@ -35,8 +35,8 @@ def hyperGradDescent(loss_object, theta, maxEvals , alpha, X, verbosity = True):
         diff_inf_norm = la.norm(prev_centroid - theta, np.inf)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
-        if verbosity == True: # and its% 10 == 0:
-            print(its, curr_obj.loss, diff_inf_norm, curr_obj.centroid.T)
+        #if verbosity == True: # and its% 10 == 0:
+            #print(its, curr_obj.loss, diff_inf_norm, curr_obj.centroid.T)
         its += 1
         prev_centroid = theta
     return loss_values, centroid_list
@@ -51,13 +51,18 @@ def exponentialMap(grad, p):
 
 
 if __name__ == "__main__":
-    points = generatePoints(1)
+    points = generatePoints(10)
     print(points)
     #print(hyperboloidDist(points[0], points[1]))
     #theta = copy.deepcopy(points[0])
     theta = randTheta(2)
     #obj = hyperGradLoss(points, theta)
-    loss_list, centroid_list = hyperGradDescent(hyperGradLoss, theta, 100, 0.5, points, True)
+    conversion_its = []
+    for i in range(500):
+        points = generatePoints(10)
+        loss_list, centroid_list = hyperGradDescent(hyperGradLoss, theta, 250, 0.01, points, True)
+        conversion_its.append(len(centroid_list))
+    print(sum(conversion_its)/len(conversion_its))
     #print(loss_list)
     #print(obj.centroid)
     #print(obj.loss)
