@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import copy
+import matplotlib.pyplot as plt
 
 
 def generatePoints(N, k=2):
@@ -60,17 +61,24 @@ def hyperboloidDist(point1, point2):
     return np.arccosh(-minkowskiDot(point1, point2))
 
 
-def exponentialMap(p, v):
+def plot_loss(loss_values_dict, save_name):
     """
-    Compute the exponential map at p in H^n for some point v. Exponential maps a point v from the tangent space
-    back onto the hyperboloid.
-
-    :param p: point to compute exponential map at
-    :param v: input to exponential map
-    :return: Point on H^k which corresponds to the exponential map at p evaluated at v.
+    Plot loss_values vs. iteration number.
+    :param loss_values_dict: dictionary of loss value arrays keyed by name (i.e. 'grad_descent', 'armijo',...). Note
+    that all loss value arrays must be of the same length.
+    :param save_name: location to save image
+    :return: None
     """
-    norm_v = np.linalg.norm(v)
-    return np.cosh(norm_v) * p + np.sinh(norm_v) * (1 / norm_v) * v
+    fig, ax = plt.subplots(figsize=(10, 10))
+    # Add each method to the plot
+    for (method_name, loss_val_array) in loss_values_dict.items():
+        print(method_name, len(loss_val_array))
+        ax.plot(len(loss_val_array), loss_val_array, label=method_name)
+    ax.legend(loc='upper right')
+    plt.xlabel('iteration')
+    plt.ylabel('loss')
+    plt.title('Grad Descent in Hyperbolic Space')
+    plt.savefig(save_name)
 
 
 if __name__ == "__main__":
@@ -83,7 +91,6 @@ if __name__ == "__main__":
     # print(-minkowskiDot(points[0], points[0]))
     # print(hyperboloidDist(points[0], points[0]))
     newpoint = b.reshape((points[0].shape[0], -1))
-    print('exp map', exponentialMap(points[0], points[1]))
     # print(newpoint)
     print(newpoint.T[0])
     print(np.arccosh(-minkowskiArrayDot(newpoint.T, points[0])))
