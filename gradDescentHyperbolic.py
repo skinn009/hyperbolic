@@ -36,9 +36,9 @@ def hyperGradDescent(loss_object, theta, maxEvals , alpha, X, verbosity = True):
         grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
-        #if verbosity == True: # and its% 10 == 0:
-            #print(its, curr_obj.loss, diff_inf_norm, curr_obj.centroid.T)
-        print(its, curr_obj.loss, curr_obj.centroid.T)
+        if verbosity == True and its% 10 == 0:
+            print(its, curr_obj.loss, grad_inf_norm, curr_obj.centroid.T)
+        #print(its, curr_obj.loss, curr_obj.centroid.T)
         its += 1
         prev_centroid = theta
     return loss_values, centroid_list
@@ -68,7 +68,7 @@ if __name__ == "__main__":
         conversion_its.append(len(centroid_list))
     print(sum(conversion_its)/len(conversion_its))
     """
-    _, centroid_list = hyperGradDescent(hyperGradLoss, theta, 500, 0.1, points, True)
+    _, centroid_list = hyperGradDescent(hyperGradLoss, theta, 1000, 0.01, points, True)
     cent = centroid_list[-1]
     dist_list = []
     for point in points:
