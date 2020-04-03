@@ -24,19 +24,21 @@ def hyperGradDescent(loss_object, theta, maxEvals , alpha, X, verbosity = True):
     its = 1
     loss_values = []
     centroid_list = []
-    diff_inf_norm = 1 # norm of difference between current centroid and previous centroid
+    grad_inf_norm = 1 # norm of difference between current centroid and previous centroid
     prev_centroid = theta
     centroid_list.append(theta)
-    while diff_inf_norm > 1e-4 and its <= maxEvals:
+    while grad_inf_norm > 1e-5 and its <= maxEvals:
         curr_obj = loss_object(X, theta)
         #print("loss", curr_obj.loss)
         theta = exponentialMap(-alpha*curr_obj.gradTangent, curr_obj.centroid)
         #print("theta", theta)
-        diff_inf_norm = la.norm(prev_centroid - theta, np.inf)
+        #diff_inf_norm = la.norm(prev_centroid - theta, np.inf)
+        grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
         #if verbosity == True: # and its% 10 == 0:
             #print(its, curr_obj.loss, diff_inf_norm, curr_obj.centroid.T)
+        print(its, curr_obj.loss, curr_obj.centroid.T)
         its += 1
         prev_centroid = theta
     return loss_values, centroid_list
@@ -51,19 +53,32 @@ def exponentialMap(grad, p):
 
 
 if __name__ == "__main__":
-    points = generatePoints(10)
+    points = generatePoints(5)
     print(points)
     #print(hyperboloidDist(points[0], points[1]))
     #theta = copy.deepcopy(points[0])
     theta = randTheta(2)
     #obj = hyperGradLoss(points, theta)
+    """
+    #To compute mean interations till convergence.
     conversion_its = []
     for i in range(500):
         points = generatePoints(10)
         loss_list, centroid_list = hyperGradDescent(hyperGradLoss, theta, 250, 0.01, points, True)
         conversion_its.append(len(centroid_list))
     print(sum(conversion_its)/len(conversion_its))
+    """
+    _, centroid_list = hyperGradDescent(hyperGradLoss, theta, 500, 0.1, points, True)
+    cent = centroid_list[-1]
+    dist_list = []
+    for point in points:
+        dist_list.append(hyperboloidDist(point, cent))
+    print("num its:", len(centroid_list))
+    print("last centroid:\n", cent)
+    print("distances from centroid:\n", dist_list)
+    """
     #print(loss_list)
     #print(obj.centroid)
     #print(obj.loss)
     #print(obj.gradAmbient)
+    """
