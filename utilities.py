@@ -73,7 +73,7 @@ def plot_loss(loss_values_dict, save_name):
     # Add each method to the plot
     for (method_name, loss_val_array) in loss_values_dict.items():
         print(method_name, len(loss_val_array))
-        ax.plot(len(loss_val_array), loss_val_array, label=method_name)
+        ax.plot(range(len(loss_val_array)), loss_val_array, label=method_name)
     ax.legend(loc='upper right')
     plt.xlabel('iteration')
     plt.ylabel('loss')
