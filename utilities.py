@@ -81,6 +81,15 @@ def plot_loss(loss_values_dict, save_name):
     plt.savefig(save_name)
 
 
+def poincareDist(point1, point2):
+    """
+    From equation (6) in Wilson, Leimeister. Points in B^k space.
+    :param point1:
+    :param point2:
+    :return: Distance between two points in poincare ball model space
+    """
+    return None
+
 if __name__ == "__main__":
     points = generatePoints(2)
     # print(points[0])

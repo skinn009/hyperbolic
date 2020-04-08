@@ -1,5 +1,4 @@
 import numpy as np
-import copy
 import numpy.linalg as la
 
 from utilities import hyperboloidDist, minkowskiDot, generatePoints, randTheta, plot_loss
