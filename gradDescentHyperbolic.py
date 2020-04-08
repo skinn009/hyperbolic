@@ -1,5 +1,4 @@
 import numpy as np
-import copy
 import numpy.linalg as la
 
 from utilities import hyperboloidDist, minkowskiDot, generatePoints, randTheta, plot_loss
@@ -86,6 +85,7 @@ def armijoGradDescent (loss_object, theta, maxEvals, gamma, X, verbosity=True):
         alpha = min(1, 2 * (prev_obj.loss - curr_obj.loss)/np.dot(curr_obj.gradTangent.T, curr_obj.gradTangent))
         prev_obj = curr_obj
     return loss_values, centroid_list
+
 
 def exponentialMap(grad, p):
     """
