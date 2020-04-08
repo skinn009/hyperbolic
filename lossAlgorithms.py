@@ -35,4 +35,4 @@ class HyperGradLoss:
         Sum of the distances between the points and the current centroid, in hyperbolic space.
         :return: scalar, which is the sum of the distances from the centroid to each of the points.
         """
-        return sum(np.arccosh(-minkowskiArrayDot(self.examples, self.centroid)))[0]
+        return sum(np.arccosh(-minkowskiArrayDot(self.examples, self.centroid))**2)[0]/np.shape(self.examples)[0]

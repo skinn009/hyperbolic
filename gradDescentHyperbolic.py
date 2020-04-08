@@ -75,7 +75,7 @@ def armijoGradDescent (loss_object, theta, maxEvals, gamma, X, verbosity=True):
             curr_obj = loss_object(X, theta_p)
             its +=1
             print(its, curr_obj.loss, curr_obj.gradTangent.T)
-            
+
         grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta_p)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     theta = randTheta(2)
 
     # obj = HyperGradLoss(points, theta)
-    """
+
     loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 500, 0.1, points, True)
     plot_loss({'grad descent': loss_values}, '/Users/michaelskinner/Desktop/vanilla.png')
     cent = centroid_list[-1]
@@ -120,3 +120,4 @@ if __name__ == "__main__":
     print("distances from centroid:\n", dist_list)
     """
     loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)
+    """
