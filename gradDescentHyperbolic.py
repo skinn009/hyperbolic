@@ -86,6 +86,7 @@ def armijoGradDescent (loss_object, theta, maxEvals, gamma, X, verbosity=True):
         prev_obj = curr_obj
     return loss_values, centroid_list
 
+
 def exponentialMap(grad, p):
     """
     Compute the exponential map at p in H^n for some point grad. Exponential maps a point grad from the tangent space
