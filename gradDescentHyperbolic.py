@@ -32,13 +32,59 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
         grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
-        # if verbosity == True: # and its% 10 == 0:
-        # print(its, curr_obj.loss, diff_inf_norm, curr_obj.centroid.T)
-        print(its, curr_obj.loss, curr_obj.centroid.T)
+
+        if verbosity == True and its% 10 == 0:
+            print(its, curr_obj.loss, grad_inf_norm, curr_obj.centroid.T)
         its += 1
         prev_centroid = theta
     return loss_values, centroid_list
 
+
+def armijoGradDescent (loss_object, theta, maxEvals, gamma, X, verbosity=True):
+    """
+    This is where we iteratively learn the centroid of the points. In this method, using the armijo methode to
+    optimize the learning rate.
+    :param loss_object: this is the name of the loss function in lossAlgorithms.py, where the gradient and loss is
+    computed at each iteration of the algorithm.
+    :param theta: initial centroid
+    :param maxEvals:
+    :param alpha: learning rate
+    :param X: N x k+1 array of the points on the hyperboloid. n + 1 (rather than n) because we are in Minkowski ambient.
+    :param verbosity:
+    :return:
+    """
+    its = 1
+    loss_values = []
+    centroid_list = []
+    grad_inf_norm = 1  # infinity norm of gradTangent, which we hope will approach 0
+    prev_obj = loss_object(X, theta)
+    centroid_list.append(theta)
+    alpha = 1/la.norm(prev_obj.gradTangent)
+    print("alpha", alpha)
+    while grad_inf_norm > 1e-5 and its <= maxEvals:
+        theta_p = exponentialMap(-alpha * prev_obj.gradTangent, prev_obj.centroid)
+        curr_obj = loss_object(X, theta_p)
+        while curr_obj.loss > prev_obj.loss - gamma * alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent):
+            alpha = alpha**2 * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent)\
+                    / (2 * (curr_obj.loss + alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent) - prev_obj.loss))
+            print("alpha", alpha)
+            print("gradient", curr_obj.gradTangent.T)
+            print("loss", curr_obj.loss)
+            theta_p = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
+            curr_obj = loss_object(X, theta_p)
+            its +=1
+            print(its, curr_obj.loss, curr_obj.gradTangent.T)
+            
+        grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
+        loss_values.append(curr_obj.loss)
+        centroid_list.append(theta_p)
+
+        if verbosity == True and its% 10 == 0:
+            print(its, curr_obj.loss, grad_inf_norm, curr_obj.centroid.T)
+        its += 1
+        alpha = min(1, 2 * (prev_obj.loss - curr_obj.loss)/np.dot(curr_obj.gradTangent.T, curr_obj.gradTangent))
+        prev_obj = curr_obj
+    return loss_values, centroid_list
 
 def exponentialMap(grad, p):
     """
@@ -54,15 +100,16 @@ def exponentialMap(grad, p):
 
 
 if __name__ == "__main__":
-    points = generatePoints(5)
+    points = generatePoints(10)
     print(points)
     # print(hyperboloidDist(points[0], points[1]))
     # theta = copy.deepcopy(points[0])
     theta = randTheta(2)
-    # obj = HyperGradLoss(points, theta)
 
+    # obj = HyperGradLoss(points, theta)
+    """
     loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 500, 0.1, points, True)
-    plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
+    plot_loss({'grad descent': loss_values}, '/Users/michaelskinner/Desktop/vanilla.png')
     cent = centroid_list[-1]
     dist_list = []
     for point in points:
@@ -71,8 +118,4 @@ if __name__ == "__main__":
     print("last centroid:\n", cent)
     print("distances from centroid:\n", dist_list)
     """
-    #print(loss_list)
-    #print(obj.centroid)
-    #print(obj.loss)
-    #print(obj.gradAmbient)
-    """
+    loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)
