@@ -20,7 +20,7 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
     its = 1
     loss_values = []
     centroid_list = []
-    grad_inf_norm = 1  # norm of difference between current centroid and previous centroid
+    grad_inf_norm = 1  # norm of the tangent grad
     prev_centroid = theta
     centroid_list.append(theta)
     while grad_inf_norm > 1e-5 and its <= maxEvals:
@@ -101,23 +101,28 @@ def exponentialMap(grad, p):
 
 
 if __name__ == "__main__":
-    points = generatePoints(10)
+    points = generatePoints(3)
     print(points)
     # print(hyperboloidDist(points[0], points[1]))
     # theta = copy.deepcopy(points[0])
     theta = randTheta(2)
 
-    # obj = HyperGradLoss(points, theta)
 
-    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 500, 0.1, points, True)
-    plot_loss({'grad descent': loss_values}, '/Users/michaelskinner/Desktop/vanilla.png')
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 400, 0.2, points, True)
+    print("initial loss", loss_values[0])
+    
+
+    #plot_loss({'grad descent': loss_values}, '/Users/michaelskinner/Desktop/vanilla.png')
     cent = centroid_list[-1]
     dist_list = []
     for point in points:
-        dist_list.append(hyperboloidDist(point, cent))
+        dist_list.append(hyperboloidDist(point, cent)**2)
     print("num its:", len(centroid_list))
     print("last centroid:\n", cent)
-    print("distances from centroid:\n", dist_list)
+    print("distances^2 from centroid:\n", dist_list)
+    print("avg", sum(dist_list)/3)
+
     """
+    
     loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)
     """

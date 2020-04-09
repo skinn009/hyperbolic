@@ -39,7 +39,7 @@ def minkowskiDot(point1, point2):
 
 def minkowskiArrayDot(X, vec):
     """
-    Computes the minkowski dot between N x K array and  vector. We multiply the last column of X by -1,
+    Computes the minkowski dot between N x K array and  vector. We multiply the last element of vec by -1,
     then do normal matrix multiplication.
     :param array: N x k array
     :param vec: vector- reshaped to k X 1 for the matrix multiplication.
@@ -47,8 +47,9 @@ def minkowskiArrayDot(X, vec):
     """
     k = X.shape[1]
     vec = vec.reshape((k, -1))
-    X[:, -1] *= -1
-    return np.matmul(X, vec)
+    mod = np.ones(vec.shape)
+    mod[-1] = -1
+    return np.matmul(X, vec*mod)
 
 
 def hyperboloidDist(point1, point2):
@@ -134,7 +135,7 @@ def plot_poincare(points, save_name):
 
 
 if __name__ == "__main__":
-    points = generatePoints(2)
+    points = generatePoints(1)
     # print(points[0])
     b = copy.deepcopy(points[0])
     # b[:,-1] *= -1
