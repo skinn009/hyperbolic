@@ -101,14 +101,14 @@ def exponentialMap(grad, p):
 
 
 if __name__ == "__main__":
-    points = generatePoints(3)
+    points = generatePoints(1)
     print(points)
     # print(hyperboloidDist(points[0], points[1]))
     # theta = copy.deepcopy(points[0])
     theta = randTheta(2)
 
 
-    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 400, 0.2, points, True)
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 400, 1.9, points, True)
     print("initial loss", loss_values[0])
     
 
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     print("num its:", len(centroid_list))
     print("last centroid:\n", cent)
     print("distances^2 from centroid:\n", dist_list)
-    print("avg", sum(dist_list)/3)
+    print("avg", sum(dist_list)[0]/len(dist_list))
 
     """
     

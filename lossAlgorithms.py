@@ -50,14 +50,14 @@ class HyperGradLoss:
 
 if __name__ == "__main__":
     points = generatePoints(100)
-    #print(points)
+    print(points)
     theta = randTheta(2)
     #print("theta", theta.T)
 
     obj = HyperGradLoss(points, theta)
-    print(obj.gradAmbient)
-    print(obj.gradTangent)
-    print(obj.loss)
+    print("grd amb",obj.gradAmbient)
+    print("grd tan",obj.gradTangent)
+    print("loss", obj.loss)
     dist_list = []
     for point in points:
         dist_list.append(hyperboloidDist(point, theta)**2)
