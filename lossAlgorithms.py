@@ -25,10 +25,11 @@ class HyperGradLoss:
         mod = np.ones(self.centroid.shape)
         mod[-1] = -1
         array_dot = minkowskiArrayDot(self.examples, self.centroid)
-        dMink_dcent = (self.examples.T*mod).T
-
-        return 2 * np.matmul(self.examples.T, -np.arccosh(-array_dot)*(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
-        #return np.matmul(self.examples.T, -(array_dot ** 2 - 1) ** -.5)
+        dMDP_dcent = (self.examples.T*mod).T.reshape(self.examples.shape)
+        distances = np.arccosh(-array_dot)
+        #return np.matmul(dMDP_dcent.T, -np.arccosh(-array_dot)*(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
+        #return np.matmul(self.examples.T, -(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
+        return -distances/np.sqrt(array_dot ** 2 - 1)
 
 
     def computeTangent(self):
@@ -36,7 +37,9 @@ class HyperGradLoss:
         Compute the gradient in the tangent space, Eq. (5).
         :return: np array k+1 X 1
         """
-        return self.gradAmbient + self.centroid * minkowskiDot(self.centroid, self.gradAmbient)
+        return np.matmul(self.examples.T, self.gradAmbient)
+        #return self.gradAmbient + self.centroid * minkowskiDot(self.centroid, self.gradAmbient)
+
 
     def computeLoss(self):
         """
@@ -46,14 +49,17 @@ class HyperGradLoss:
         return sum(np.arccosh(-minkowskiArrayDot(self.examples, self.centroid))**2)[0]/np.shape(self.examples)[0]
 
 if __name__ == "__main__":
-    points = generatePoints(3)
-    print(points)
+    points = generatePoints(100)
+    #print(points)
     theta = randTheta(2)
     #print("theta", theta.T)
 
     obj = HyperGradLoss(points, theta)
-    #avg_squared_dist = sum([hyperboloidDist(point, obj.centroid)**2 for point in points])/len(points)
-    #print("avg square dist", avg_squared_dist)
-    #print("shape ambient", obj.gradAmbient.shape)
-    #print("shape tangent", obj.gradTangent.shape)
+    print(obj.gradAmbient)
+    print(obj.gradTangent)
     print(obj.loss)
+    dist_list = []
+    for point in points:
+        dist_list.append(hyperboloidDist(point, theta)**2)
+    print("distances^2 from centroid:\n", dist_list)
+    print("avg", sum(dist_list)[0]/len(points))

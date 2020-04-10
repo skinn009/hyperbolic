@@ -2,6 +2,7 @@ import numpy as np
 import math
 import copy
 import matplotlib.pyplot as plt
+import random
 
 
 def generatePoints(N, k=2, scale=1):
@@ -12,6 +13,7 @@ def generatePoints(N, k=2, scale=1):
     :param N:
     :return: numpy array of dimension N x k+1.
     """
+    random.seed(30)
     rands = [[np.random.uniform(-scale, scale) for j in range(k)] for i in range(N)]
     point_list = []
     for rand in rands:
@@ -34,22 +36,26 @@ def randTheta(k):
 def minkowskiDot(point1, point2):
     point1 = list(point1)
     point2 = list(point2)
-    return sum([point1[i] * point2[i] for i in range(len(point1) - 1)]) - point1[-1] * point2[-1]
+    mdp = sum([point1[i] * point2[i] for i in range(len(point1) - 1)]) - point1[-1] * point2[-1]
+    return min(mdp, -1e-10)
 
 
 def minkowskiArrayDot(X, vec):
     """
     Computes the minkowski dot between N x K array and  vector. We multiply the last element of vec by -1,
-    then do normal matrix multiplication.
+    then do normal matrix multiplication. To prevent errors, we set a ceiling on MDP to be -1e-10.
     :param array: N x k array
     :param vec: vector- reshaped to k X 1 for the matrix multiplication.
     :return: N x 1 array
     """
+    max_MDP = -1e-10
     k = X.shape[1]
     vec = vec.reshape((k, -1))
     mod = np.ones(vec.shape)
     mod[-1] = -1
-    return np.matmul(X, vec*mod)
+    MDP_array = np.matmul(X, vec*mod)
+    MDP_array[MDP_array > max_MDP] = max_MDP
+    return MDP_array
 
 
 def hyperboloidDist(point1, point2):
@@ -135,6 +141,7 @@ def plot_poincare(points, save_name):
 
 
 if __name__ == "__main__":
+    random.seed(1)
     points = generatePoints(1)
     # print(points[0])
     b = copy.deepcopy(points[0])
