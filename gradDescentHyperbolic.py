@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.linalg as la
 
-from utilities import hyperboloidDist, minkowskiDot, generatePoints, randTheta, plot_loss
+from utilities import *
 from lossAlgorithms import HyperGradLoss
 
 
@@ -107,12 +107,14 @@ if __name__ == "__main__":
     # theta = copy.deepcopy(points[0])
     theta = randTheta(2)
 
-
     loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 400, 0.2, points, True)
     print("initial loss", loss_values[0])
-    
+    poincare_points = np.array([hyperbolic_to_poincare(points[idx]) for idx in range(len(points))])
+    np_centroid_list = np.asarray(centroid_list).reshape((len(centroid_list), -1))
+    poincare_centroids = np.array([hyperbolic_to_poincare(np_centroid_list[idx]) for idx in range(len(np_centroid_list))])
+    plot_poincare(poincare_points, poincare_centroids, 'plots/poincare_sample')
+    # plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
 
-    #plot_loss({'grad descent': loss_values}, '/Users/michaelskinner/Desktop/vanilla.png')
     cent = centroid_list[-1]
     dist_list = []
     for point in points:
@@ -121,8 +123,4 @@ if __name__ == "__main__":
     print("last centroid:\n", cent)
     print("distances^2 from centroid:\n", dist_list)
     print("avg", sum(dist_list)/3)
-
-    """
-    
-    loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)
-    """
+    # loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)

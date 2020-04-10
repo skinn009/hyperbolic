@@ -12,7 +12,7 @@ def generatePoints(N, k=2, scale=1):
     :param N:
     :return: numpy array of dimension N x k+1.
     """
-    rands = [[np.random.uniform(-scale, scale) for j in range(k)] for i in range(N)]
+    rands = [[np.random.uniform(-scale, scale) for _ in range(k)] for i in range(N)]
     point_list = []
     for rand in rands:
         # lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
@@ -116,15 +116,20 @@ def poincare_to_hyperbolic(y):
     return (2 / (1 - (norm ** 2))) * x
 
 
-def plot_poincare(points, save_name):
+def plot_poincare(points, centroid_list=None, save_name='plots/poincare.png'):
     """
     Plot given (poincare) points on a 2D grid, save_fig to save_name.
     :param points: np.array of size (N, k), with N points, each with k=2.
+    :param centroid_list: np array of centroids in poincare space (in order)
     :param save_name: directory to save figure
     :return: None
     """
     fig = plt.figure()
-    plt.scatter(points[:, 0], points[:, 1])
+    plt.scatter(points[:, 0], points[:, 1], c='green')
+    if centroid_list.any():
+        plt.scatter(centroid_list[:-1, 0], centroid_list[:-1, 1], c='lightblue')
+        # plot the final centroid in red
+        plt.scatter(centroid_list[-1, 0], centroid_list[-1, 1], c='red')
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     circle = plt.Circle((0, 0), 1., color='black', fill=False)
