@@ -19,17 +19,20 @@ class HyperGradLoss:
 
     def computeAmbient(self):
         """
-        The gradient of the distance function in the ambient space, eq. (4), Wilson, Leimeister.
+        The gradient of the distance^2 function in the ambient space, eq. (4), Wilson, Leimeister.
         :return: np array, (k + 1) x 1
         """
         mod = np.ones(self.centroid.shape)
         mod[-1] = -1
-        array_dot = minkowskiArrayDot(self.examples, self.centroid)
-        dMDP_dcent = (self.examples.T*mod).T.reshape(self.examples.shape)
-        distances = np.arccosh(-array_dot)
+        array_MDP = minkowskiArrayDot(self.examples, self.centroid)
+        dMDP_dcent = (self.examples.T*mod).T.reshape(self.examples.shape)#multiplies last column by-1
+        distances = np.arccosh(-array_MDP)
         #return np.matmul(dMDP_dcent.T, -np.arccosh(-array_dot)*(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
         #return np.matmul(self.examples.T, -(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
-        return -distances/np.sqrt(array_dot ** 2 - 1)
+        scales = -2 * distances/np.sqrt(array_MDP ** 2 - 1)
+        #return np.matmul(self.examples.T, scales)
+        return np.matmul(dMDP_dcent.T, scales)
+        #return self.examples*scales.sum(axis=0)
 
 
     def computeTangent(self):
@@ -37,8 +40,8 @@ class HyperGradLoss:
         Compute the gradient in the tangent space, Eq. (5).
         :return: np array k+1 X 1
         """
-        return np.matmul(self.examples.T, self.gradAmbient)
-        #return self.gradAmbient + self.centroid * minkowskiDot(self.centroid, self.gradAmbient)
+        #return np.matmul(self.examples.T, self.gradAmbient)
+        return self.gradAmbient + self.centroid * minkowskiDot(self.centroid, self.gradAmbient)
 
 
     def computeLoss(self):
@@ -49,14 +52,14 @@ class HyperGradLoss:
         return sum(np.arccosh(-minkowskiArrayDot(self.examples, self.centroid))**2)[0]/np.shape(self.examples)[0]
 
 if __name__ == "__main__":
-    points = generatePoints(100)
+    points = generatePoints(10)
     print(points)
     theta = randTheta(2)
     #print("theta", theta.T)
 
     obj = HyperGradLoss(points, theta)
-    print("grd amb",obj.gradAmbient)
-    print("grd tan",obj.gradTangent)
+    print("grd amb",obj.gradAmbient.T)
+    print("grd tan",obj.gradTangent.T)
     print("loss", obj.loss)
     dist_list = []
     for point in points:

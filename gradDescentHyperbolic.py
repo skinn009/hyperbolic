@@ -22,14 +22,14 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
     centroid_list = []
     grad_inf_norm = 1  # norm of the tangent grad
     prev_centroid = theta
-    centroid_list.append(theta)
-    while grad_inf_norm > 1e-5 and its <= maxEvals:
+    #centroid_list.append(theta)
+    while grad_inf_norm > 1e-3 and its <= maxEvals:
         curr_obj = loss_object(X, theta)
-        # print("loss", curr_obj.loss)
-        theta = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
-        # print("theta", theta)
-        # diff_inf_norm = la.norm(prev_centroid - theta, np.inf)
-        grad_inf_norm = la.norm(curr_obj.gradTangent, np.inf)
+        print("loss", curr_obj.loss)
+        theta = exponentialMap(alpha * curr_obj.gradTangent, curr_obj.centroid)
+        #print("theta", theta)
+        #grad_inf_norm = la.norm(prev_centroid - theta, np.inf)
+        grad_inf_norm = la.norm(curr_obj.gradTangent)
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
 
@@ -97,18 +97,19 @@ def exponentialMap(grad, p):
     :return: Point on H^k which corresponds to the exponential map at p evaluated at grad.
     """
     g_norm = la.norm(grad)
+    print ("grad norm", g_norm)
     return np.cosh(g_norm) * p + np.sinh(g_norm) * grad / g_norm
 
 
 if __name__ == "__main__":
-    points = generatePoints(1)
+    points = generatePoints(2)
     print(points)
     # print(hyperboloidDist(points[0], points[1]))
     # theta = copy.deepcopy(points[0])
     theta = randTheta(2)
 
 
-    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 400, 1.9, points, True)
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 20, .1, points, True)
     print("initial loss", loss_values[0])
     
 
@@ -120,7 +121,8 @@ if __name__ == "__main__":
     print("num its:", len(centroid_list))
     print("last centroid:\n", cent)
     print("distances^2 from centroid:\n", dist_list)
-    print("avg", sum(dist_list)[0]/len(dist_list))
+    print("avg", sum(dist_list)/len(dist_list))
+    #print("cent list", centroid_list)
 
     """
     

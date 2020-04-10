@@ -35,7 +35,7 @@ def minkowskiDot(point1, point2):
     point1 = list(point1)
     point2 = list(point2)
     MDP = sum([point1[i] * point2[i] for i in range(len(point1) - 1)]) - point1[-1] * point2[-1]
-    return min(MDP, -1e-10)
+    return min(MDP, -(1 + 1e-10))
 
 
 def minkowskiArrayDot(X, vec):
@@ -46,13 +46,13 @@ def minkowskiArrayDot(X, vec):
     :param vec: vector- reshaped to k X 1 for the matrix multiplication.
     :return: N x 1 array
     """
-    MDP_max = -1e-10
+    MDP_max = -(1 + 1e-10)
     k = X.shape[1]
     vec = vec.reshape((k, -1))
     mod = np.ones(vec.shape)
     mod[-1] = -1
     MDP = np.matmul(X, vec*mod)
-    MDP[MDP > -1e-10] = -1e-10
+    MDP[MDP > MDP_max] = MDP_max
     return MDP
 
 
