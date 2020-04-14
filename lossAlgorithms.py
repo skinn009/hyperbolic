@@ -25,7 +25,7 @@ class HyperGradLoss:
         mod = np.ones(self.centroid.shape)
         mod[-1] = -1
         array_MDP = minkowskiArrayDot(self.examples, self.centroid)
-        dMDP_dcent = (self.examples.T*mod).T.reshape(self.examples.shape)#multiplies last column by-1
+        dMDP_dcent = (self.examples.T*mod).T.reshape(self.examples.shape)#multiplies last column by-1, d/dc(x[-1])
         distances = np.arccosh(-array_MDP)
         #return np.matmul(dMDP_dcent.T, -np.arccosh(-array_dot)*(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
         #return np.matmul(self.examples.T, -(array_dot ** 2 - 1) ** -.5)/self.examples.shape[1]
