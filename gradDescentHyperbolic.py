@@ -26,7 +26,8 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
     while grad_inf_norm > 1e-3 and its <= maxEvals:
         curr_obj = loss_object(X, theta)
         print("loss", curr_obj.loss)
-        theta = exponentialMap(alpha * curr_obj.gradTangent, curr_obj.centroid)
+        theta = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
+
         #print("theta", theta)
         #grad_inf_norm = la.norm(prev_centroid - theta, np.inf)
         grad_inf_norm = la.norm(curr_obj.gradTangent)
