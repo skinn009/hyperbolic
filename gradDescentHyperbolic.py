@@ -23,13 +23,14 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
     grad_inf_norm = 1  # norm of the tangent grad
     prev_centroid = theta
     # centroid_list.append(theta)
-    while grad_inf_norm > 1e-3 and its <= maxEvals:
+    while grad_inf_norm > 1e-4 and its <= maxEvals:
         curr_obj = loss_object(X, theta)
-        print("loss", curr_obj.loss)
-        theta = exponentialMap(alpha * curr_obj.gradTangent, curr_obj.centroid)
+        #print("loss", curr_obj.loss)
+        theta = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
         # print("theta", theta)
         # grad_inf_norm = la.norm(prev_centroid - theta, np.inf)
-        grad_inf_norm = la.norm(curr_obj.gradTangent)
+        #grad_inf_norm = la.norm(curr_obj.gradTangent)
+        grad_inf_norm = np.sqrt(minkowskiDot(curr_obj.gradTangent, curr_obj.gradTangent))
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
 
@@ -61,7 +62,7 @@ def armijoGradDescent(loss_object, theta, maxEvals, gamma, X, verbosity=True):
     centroid_list.append(theta)
     alpha = 1 / la.norm(prev_obj.gradTangent)
     print("alpha", alpha)
-    while grad_inf_norm > 1e-5 and its <= maxEvals:
+    while grad_inf_norm > 1e-3 and its <= maxEvals:
         theta_p = exponentialMap(-alpha * prev_obj.gradTangent, prev_obj.centroid)
         curr_obj = loss_object(X, theta_p)
         while curr_obj.loss > prev_obj.loss - gamma * alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent):
@@ -97,22 +98,28 @@ def exponentialMap(grad, p):
     :param p: point to compute exponential map at
     :return: Point on H^k which corresponds to the exponential map at p evaluated at grad.
     """
-    g_norm = la.norm(grad)
+    #g_norm = la.norm(grad)
+    #print ("mink_dot", minkowskiDot(grad, grad))
+    g_norm = np.sqrt(max(minkowskiDot(grad, grad), 0))
+    if g_norm == 0:
+        return p
+
+
     print("grad norm", g_norm)
     return (np.cosh(g_norm) * p) + (np.sinh(g_norm)/ g_norm) * grad
 
 
 if __name__ == "__main__":
-    points = generatePoints(4)
+    points = generatePoints(3)
     print(points)
     # print(hyperboloidDist(points[0], points[1]))
     theta = randTheta(2)
 
-    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 30, 0.1, points, True)
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
 
     print("initial loss", loss_values[0])
-    plot_poincare(points, centroid_list, save_name='plots/poincare_sample.png')
-    plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
+    #plot_poincare(points, centroid_list, save_name='plots/poincare_sample.png')
+    #plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
 
     cent = centroid_list[-1]
     dist_list = []

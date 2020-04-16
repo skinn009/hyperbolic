@@ -23,10 +23,13 @@ class HyperGradLoss:
         The gradient of the distance^2 function in the ambient space, eq. (4), Wilson, Leimeister.
         :return: np array, (k + 1) x 1
         """
+        maxMDP = -(1 + 1e-10)
         array_MDP = minkowskiArrayDot(self.examples, self.centroid)
-        # multiplies last column by-1
+        array_MDP[array_MDP > maxMDP] = maxMDP
+
+        # multiplies last column of examples by-1
         dMDP_dcent = np.copy(self.examples)
-        dMDP_dcent[:, -1] *= -1
+        #dMDP_dcent[:, -1] *= -1
 
         distances = np.arccosh(-array_MDP)
         scales = (-2/len(distances)) * distances / np.sqrt((array_MDP ** 2) - 1)
