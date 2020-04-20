@@ -105,17 +105,49 @@ def exponentialMap(grad, p):
         return p
 
 
-    print("grad norm", g_norm)
+    #print("grad norm", g_norm)
     return (np.cosh(g_norm) * p) + (np.sinh(g_norm)/ g_norm) * grad
+
+def test_recursion():
+    """
+    Generate 2 pairs of points, compute the centroid for each pair, then generate a centroid from the pair of
+    centroids, and determine the distances from the final centroid to all 4 points.
+    :return:
+    """
+    points1 = generatePoints(2)
+    theta1 = randTheta(2)
+    loss_values1, centroid_list1 = hyperGradDescent(HyperGradLoss, theta1, 100, 0.4, points1, True)
+    cent1 = centroid_list1[-1]
+
+    points2 = generatePoints(2)
+    theta2 = randTheta(2)
+    loss_values2, centroid_list2 = hyperGradDescent(HyperGradLoss, theta2, 100, 0.4, points2, True)
+    cent2 = centroid_list2[-1]
+
+    points3 = np.array([cent1, cent2]).reshape(2,-1)
+    theta3 = randTheta(2)
+    loss_values3, centroid_list3 = hyperGradDescent(HyperGradLoss, theta3, 100, 0.4, points3, True)
+    cent_final = centroid_list3[-1]
+
+    points = np.concatenate((points1, points2), axis=0)
+    print("points", points)
+    dist_list = []
+    for point in points:
+        dist_list.append(hyperboloidDist(point, cent_final) ** 2)
+
+    print("distance list:")
+    print(dist_list)
 
 
 if __name__ == "__main__":
-    points = generatePoints(3)
+    """
+    points = generatePoints(2)
     print(points)
     # print(hyperboloidDist(points[0], points[1]))
     theta = randTheta(2)
+    
 
-    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.4, points, True)
 
     print("initial loss", loss_values[0])
     #plot_poincare(points, centroid_list, save_name='plots/poincare_sample.png')
@@ -130,3 +162,5 @@ if __name__ == "__main__":
     print("distances^2 from centroid:\n", dist_list)
     print("avg", sum(dist_list) / len(dist_list))
     # loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)
+    """
+    test_recursion()
