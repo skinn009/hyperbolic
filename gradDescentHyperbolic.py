@@ -20,6 +20,7 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
     its = 1
     loss_values = []
     centroid_list = []
+    centroid_list.append(theta)
     grad_inf_norm = 1  # norm of the tangent grad
     prev_centroid = theta
     # centroid_list.append(theta)
@@ -89,6 +90,41 @@ def armijoGradDescent(loss_object, theta, maxEvals, gamma, X, verbosity=True):
     return loss_values, centroid_list
 
 
+def barzeliaBowrein(loss_object, theta, maxEvals, gamma, X, verbosity=True):
+    its = 1
+    loss_values = []
+    centroid_list = []
+    centroid_list.append(theta)
+    grad_norm = 1
+    prev_obj = loss_object(X, theta)
+    #Initialize alpha to 1/||grad||
+    alpha = 1 / la.norm(prev_obj.gradTangent)
+    theta_prev = theta
+    theta_cur = exponentialMap(-alpha * prev_obj.gradTangent, prev_obj.centroid)
+    while its <= maxEvals and grad_norm > 1e-4:
+        curr_obj = loss_object(X, theta_cur)
+        while curr_obj.loss > prev_obj.loss - gamma*alpha*np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent) and its <= maxEvals:
+            alpha = np.dot((theta_cur - theta_prev).T,(theta_cur - theta_prev))/np.dot((prev_obj.gradTangent - curr_obj.gradTangent).T,
+                                                                        (prev_obj.gradTangent - curr_obj.gradTangent))
+            theta_p = exponentialMap(-alpha * prev_obj.gradTangent, prev_obj.centroid)
+            curr_obj = loss_object(X, theta_p)
+            #print(its, curr_obj.loss)
+            its+=1
+        theta = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
+        grad_norm = la.norm(curr_obj.gradTangent, np.inf)
+        centroid_list.append(theta)
+        if verbosity == True and its%10 == 0:
+            print(its, alpha, curr_obj.loss, grad_norm)
+        its += 1
+        theta_prev = theta_cur
+        theta_cur = theta
+        prev_obj = curr_obj
+        loss_values.append(curr_obj.loss)
+    # while len(loss_values) < maxEvals:
+    #     loss_values.append(loss_values[-1])
+    return loss_values, centroid_list
+
+
 def exponentialMap(grad, p):
     """
     Compute the exponential map at p in H^n for some point grad. Exponential maps a point grad from the tangent space
@@ -155,12 +191,12 @@ if __name__ == "__main__":
 
     cent = centroid_list[-1]
     dist_list = []
-    for point in points:
-        dist_list.append(hyperboloidDist(point, cent) ** 2)
-    print("num its:", len(centroid_list))
-    print("last centroid:\n", cent)
-    print("distances^2 from centroid:\n", dist_list)
-    print("avg", sum(dist_list) / len(dist_list))
+    # for point in points:
+    #     dist_list.append(hyperboloidDist(point, cent) ** 2)
+    # print("num its:", len(centroid_list))
+    # print("last centroid:\n", cent)
+    # print("distances^2 from centroid:\n", dist_list)
+    # print("avg", sum(dist_list) / len(dist_list))
 
 
     loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 50, .1, points, True)
@@ -168,4 +204,6 @@ if __name__ == "__main__":
     plot_poincare(points, centroid_list, save_name='plots/armijo_sample.png')
     plot_loss({'Armijo grad descent': loss_values}, 'plots/vanilla_armijo.png')
 
-    #test_recursion()
+    loss_values, centroid_list = barzeliaBowrein(HyperGradLoss, theta, 200, 0.1, points, True)
+    plot_poincare(points, centroid_list, save_name='plots/barzelia_sample.png')
+    plot_loss({'barzeliaBowrein- grad descent': loss_values}, 'plots/vanilla_barzelia.png')
