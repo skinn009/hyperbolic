@@ -138,9 +138,9 @@ def plot_poincare(points, centroid_list=None, save_name='plots/poincare.png'):
         plt.scatter(poincare_centroids[:-1, 0], poincare_centroids[:-1, 1], c='lightblue')
         # plot the final centroid in red
         plt.scatter(poincare_centroids[-1, 0], poincare_centroids[-1, 1], c='red')
-    plt.xlim(-1, 1)
-    plt.ylim(-1, 1)
-    circle = plt.Circle((0, 0), 1., color='black', fill=False)
+    plt.xlim(-.7, .7)
+    plt.ylim(-.7, .7)
+    circle = plt.Circle((0, 0), .5, color='black', fill=False)
     ax = plt.gca()
     ax.add_artist(circle)
     plt.savefig(save_name)

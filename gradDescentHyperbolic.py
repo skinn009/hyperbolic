@@ -61,17 +61,17 @@ def armijoGradDescent(loss_object, theta, maxEvals, gamma, X, verbosity=True):
     prev_obj = loss_object(X, theta)
     centroid_list.append(theta)
     alpha = 1 / la.norm(prev_obj.gradTangent)
-    print("alpha", alpha)
-    while grad_inf_norm > 1e-3 and its <= maxEvals:
+
+    while grad_inf_norm > 1e-4 and its <= maxEvals:
         theta_p = exponentialMap(-alpha * prev_obj.gradTangent, prev_obj.centroid)
         curr_obj = loss_object(X, theta_p)
         while curr_obj.loss > prev_obj.loss - gamma * alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent):
             alpha = alpha ** 2 * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent) \
                     / (2 * (
                         curr_obj.loss + alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent) - prev_obj.loss))
-            print("alpha", alpha)
-            print("gradient", curr_obj.gradTangent.T)
-            print("loss", curr_obj.loss)
+            #print("alpha", alpha)
+            #print("gradient", curr_obj.gradTangent.T)
+            #print("loss", curr_obj.loss)
             theta_p = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
             curr_obj = loss_object(X, theta_p)
             its += 1
@@ -140,18 +140,18 @@ def test_recursion():
 
 
 if __name__ == "__main__":
-    """
-    points = generatePoints(2)
-    print(points)
+
+    points = generatePoints(200)
+    #print(points)
     # print(hyperboloidDist(points[0], points[1]))
     theta = randTheta(2)
     
 
-    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.4, points, True)
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
 
     print("initial loss", loss_values[0])
-    #plot_poincare(points, centroid_list, save_name='plots/poincare_sample.png')
-    #plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
+    plot_poincare(points, centroid_list, save_name='plots/poincare_sample.png')
+    plot_loss({'grad descent': loss_values}, 'plots/vanilla.png')
 
     cent = centroid_list[-1]
     dist_list = []
@@ -161,6 +161,11 @@ if __name__ == "__main__":
     print("last centroid:\n", cent)
     print("distances^2 from centroid:\n", dist_list)
     print("avg", sum(dist_list) / len(dist_list))
-    # loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 500, .1, points, True)
-    """
-    test_recursion()
+
+
+    loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 50, .1, points, True)
+    print(centroid_list[-1])
+    plot_poincare(points, centroid_list, save_name='plots/armijo_sample.png')
+    plot_loss({'Armijo grad descent': loss_values}, 'plots/vanilla_armijo.png')
+
+    #test_recursion()
