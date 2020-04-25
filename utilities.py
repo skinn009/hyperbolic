@@ -144,3 +144,19 @@ def plot_poincare(points, centroid_list=None, save_name='plots/poincare.png'):
     ax = plt.gca()
     ax.add_artist(circle)
     plt.savefig(save_name)
+
+
+def plot_poincare_clustering(points, means, save_name='plots/poincare_clustering.png'):
+    poincare_points = np.array([hyperbolic_to_poincare(points[idx]) for idx in range(len(points))])
+    poincare_centroids = np.array([hyperbolic_to_poincare(means[idx]) for idx in range(len(means))])
+
+    fig = plt.figure()
+    plt.scatter(poincare_points[:, 0], poincare_points[:, 1], c='green')
+    # plot the the centroids in red
+    plt.scatter(poincare_centroids[:, 0], poincare_centroids[:, 1], c='red')
+    plt.xlim(-.7, .7)
+    plt.ylim(-.7, .7)
+    circle = plt.Circle((0, 0), .5, color='black', fill=False)
+    ax = plt.gca()
+    ax.add_artist(circle)
+    plt.savefig(save_name)

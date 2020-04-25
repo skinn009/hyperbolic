@@ -181,7 +181,6 @@ if __name__ == "__main__":
     #print(points)
     # print(hyperboloidDist(points[0], points[1]))
     theta = randTheta(2)
-    
 
     loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
 
@@ -197,7 +196,6 @@ if __name__ == "__main__":
     # print("last centroid:\n", cent)
     # print("distances^2 from centroid:\n", dist_list)
     # print("avg", sum(dist_list) / len(dist_list))
-
 
     loss_values, centroid_list = armijoGradDescent(HyperGradLoss, theta, 50, .1, points, True)
     print(centroid_list[-1])
