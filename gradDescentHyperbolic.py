@@ -1,5 +1,7 @@
 import numpy as np
 import numpy.linalg as la
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 from utilities import *
 from lossAlgorithms import HyperGradLoss
@@ -144,6 +146,7 @@ def exponentialMap(grad, p):
     #print("grad norm", g_norm)
     return (np.cosh(g_norm) * p) + (np.sinh(g_norm)/ g_norm) * grad
 
+
 def test_recursion():
     """
     Generate 2 pairs of points, compute the centroid for each pair, then generate a centroid from the pair of
@@ -160,7 +163,7 @@ def test_recursion():
     loss_values2, centroid_list2 = hyperGradDescent(HyperGradLoss, theta2, 100, 0.4, points2, True)
     cent2 = centroid_list2[-1]
 
-    points3 = np.array([cent1, cent2]).reshape(2,-1)
+    points3 = np.array([cent1, cent2]).reshape(2, -1)
     theta3 = randTheta(2)
     loss_values3, centroid_list3 = hyperGradDescent(HyperGradLoss, theta3, 100, 0.4, points3, True)
     cent_final = centroid_list3[-1]
@@ -175,8 +178,55 @@ def test_recursion():
     print(dist_list)
 
 
-if __name__ == "__main__":
+def experimentOne():
+    """
+    Experiment 1 from our project writeup. Vanilla GD with 5 points in H^2.
+    """
+    points = generatePoints(50, k=2, scale=10)
+    theta = randTheta(2, scale=50)
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
+    plot_poincare(points, centroid_list, save_name='plots/experiment1_results.png')
+    # plot_loss({'grad descent': loss_values}, 'plots/experiment1_loss.png')
 
+    # We also plot the points and centroid in R^3 to show that we are not solving in euclidean space.
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(points[:, 0], points[:, 1], points[:, 2], color='g')
+    ax.scatter(centroid_list[-1][0], centroid_list[-1][1], centroid_list[-1][2], color='red')
+    plt.savefig('plots/experiment1_example.png')
+
+
+def experimentTwo():
+    """
+    Experiment 2. We check if the
+    """
+    points = generatePoints(5, k=2, scale=10, same_quadrant=True)
+    theta = np.reshape(points[0, :], (3, 1))
+    loss_values, centroid_list = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
+    plot_poincare(points, centroid_list, save_name='plots/experiment2_results.png')
+
+    # We also plot the points and centroid in R^3 to show that we are not solving in euclidean space.
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(points[:, 0], points[:, 1], points[:, 2], color='g')
+    ax.scatter(centroid_list[-1][0], centroid_list[-1][1], centroid_list[-1][2], color='red')
+    plt.savefig('plots/experiment2_example.png')
+
+
+def experimentThree():
+    m = 1000
+    d = 80
+    points = generatePoints(m, k=d)
+    theta = np.reshape(points[0, :], (d + 1, 1))
+    loss_values_vanilla, _ = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
+    loss_values_armijo, _ = armijoGradDescent(HyperGradLoss, theta, 50, 0.1, points, True)
+    loss_values_bb, _ = barzeliaBowrein(HyperGradLoss, theta, 200, 0.1, points, True)
+    plot_loss({'Barzelia-Bowrein': loss_values_bb,
+               'Vanilla': loss_values_vanilla,
+               'Armijo Vanilla': loss_values_armijo}, 'plots/vanilla_barzelia.png')
+
+
+def testing():
     points = generatePoints(200)
     #print(points)
     # print(hyperboloidDist(points[0], points[1]))
@@ -205,3 +255,9 @@ if __name__ == "__main__":
     loss_values, centroid_list = barzeliaBowrein(HyperGradLoss, theta, 200, 0.1, points, True)
     plot_poincare(points, centroid_list, save_name='plots/barzelia_sample.png')
     plot_loss({'barzeliaBowrein- grad descent': loss_values}, 'plots/vanilla_barzelia.png')
+
+
+if __name__ == '__main__':
+    # experimentOne()
+    # experimentTwo()
+    experimentThree()

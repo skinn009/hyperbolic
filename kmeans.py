@@ -36,7 +36,7 @@ class KMeans:
                 if i in cluster_centers:
                     d_xs.append(0)
                     continue
-                distances = [np.linalg.norm(self.x[i] - self.x[clu_idx]) for clu_idx in cluster_centers]
+                distances = [hyperboloidDist(self.x[i], self.x[clu_idx]) for clu_idx in cluster_centers]
                 d_xs.append(min(distances) ** 2)
             # Now, normalize the d_xs so they define a probability distribution
             pr_x = [d_xs[idx] / sum(d_xs) for idx in range(len(d_xs))]
@@ -106,9 +106,12 @@ class KMeans:
 
 
 def main():
-    x = generatePoints(100, 2)
+    x = generatePoints(8, 2)
+    print(x)
     print('Mean and variance of each feature:', x.mean(axis=0), x.var(axis=0))
-    k_means = KMeans(x, 5)
+    # k_means = KMeans(x, 5, init='++')
+    k_means = KMeans(x, 4, init='random')
+
     k_means.fit()
     means = k_means.means
     print(means)

@@ -4,7 +4,7 @@ import copy
 import matplotlib.pyplot as plt
 
 
-def generatePoints(N, k=2, scale=1):
+def generatePoints(N, k=2, scale=1, same_quadrant=False):
     """
     We generate N points on the hyperboloid satisfying the equation . If we are in H^2,
     We get random numbers for x1, x2, and compute for x3 where x3 = sqrt(1 + x1^2 + x2^2).
@@ -12,7 +12,10 @@ def generatePoints(N, k=2, scale=1):
     :param N:
     :return: numpy array of dimension N x k+1.
     """
-    rands = [[np.random.uniform(-scale, scale) for _ in range(k)] for i in range(N)]
+    if same_quadrant:
+        rands = [[np.random.uniform(0, scale) * np.random.rand() for _ in range(k)] for i in range(N)]
+    else:
+        rands = [[np.random.uniform(-scale, scale) * np.random.rand() for _ in range(k)] for i in range(N)]
     point_list = []
     for rand in rands:
         # lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
@@ -22,13 +25,13 @@ def generatePoints(N, k=2, scale=1):
     return np.array(point_list)
 
 
-def randTheta(k):
+def randTheta(k, scale=1):
     """
     Generates a random point on the hyperboloid
     :param k: 2 for these experiments
     :return: k + 1 X 1 array
     """
-    return generatePoints(1, k)[0].reshape((k + 1, -1))
+    return generatePoints(1, k, scale=scale)[0].reshape((k + 1, -1))
 
 
 def minkowskiDot(point1, point2):
@@ -133,14 +136,14 @@ def plot_poincare(points, centroid_list=None, save_name='plots/poincare.png'):
     poincare_centroids = np.array([hyperbolic_to_poincare(centroid_list[idx]) for idx in range(len(centroid_list))])
 
     fig = plt.figure()
-    plt.scatter(poincare_points[:, 0], poincare_points[:, 1], c='green')
     if poincare_centroids is not None:
         plt.scatter(poincare_centroids[:-1, 0], poincare_centroids[:-1, 1], c='orange')
         # plot the final centroid in red
         plt.scatter(poincare_centroids[-1, 0], poincare_centroids[-1, 1], c='red')
-    plt.xlim(-.7, .7)
-    plt.ylim(-.7, .7)
-    circle = plt.Circle((0, 0), .5, color='black', fill=False)
+    plt.scatter(poincare_points[:, 0], poincare_points[:, 1], c='green')
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+    circle = plt.Circle((0, 0), 1, color='black', fill=False)
     ax = plt.gca()
     ax.add_artist(circle)
     plt.savefig(save_name)
@@ -154,9 +157,9 @@ def plot_poincare_clustering(points, means, save_name='plots/poincare_clustering
     plt.scatter(poincare_points[:, 0], poincare_points[:, 1], c='green')
     # plot the the centroids in red
     plt.scatter(poincare_centroids[:, 0], poincare_centroids[:, 1], c='red')
-    plt.xlim(-.7, .7)
-    plt.ylim(-.7, .7)
-    circle = plt.Circle((0, 0), .5, color='black', fill=False)
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+    circle = plt.Circle((0, 0), 1, color='black', fill=False)
     ax = plt.gca()
     ax.add_artist(circle)
     plt.savefig(save_name)
