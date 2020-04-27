@@ -31,9 +31,9 @@ def hyperGradDescent(loss_object, theta, maxEvals, alpha, X, verbosity=True):
         # print("loss", curr_obj.loss)
         theta = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
         # print("theta", theta)
-        # grad_inf_norm = la.norm(prev_centroid - theta, np.inf)
+        grad_inf_norm = la.norm(prev_centroid - theta, np.inf)
         # grad_inf_norm = la.norm(curr_obj.gradTangent)
-        grad_inf_norm = np.sqrt(minkowskiDot(curr_obj.gradTangent, curr_obj.gradTangent))
+        #grad_inf_norm = np.sqrt(minkowskiDot(curr_obj.gradTangent, curr_obj.gradTangent))
         loss_values.append(curr_obj.loss)
         centroid_list.append(theta)
 
@@ -318,4 +318,4 @@ if __name__ == '__main__':
     # experimentOne()
     # experimentTwo()
     experimentThree()
-    # testing()
+    #testing()
