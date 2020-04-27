@@ -1,5 +1,5 @@
 import numpy as np
-from utilities import hyperboloidDist, generatePoints, randTheta, plot_poincare_clustering
+from utilities import *
 from gradDescentHyperbolic import hyperGradDescent
 from lossAlgorithms import HyperGradLoss
 
@@ -21,8 +21,7 @@ class KMeans:
             raise NotImplementedError
 
     def _init_rand_means(self):
-        rand_nums = np.array([randTheta(self.x.shape[1] - 1) for _ in range(self.k)])
-        print(rand_nums.shape)
+        rand_nums = np.array([randTheta(self.x.shape[1] - 1, scale=10) for _ in range(self.k)])
         return rand_nums.reshape((self.k, self.x.shape[1]))
 
     def _init_pp_means(self):
@@ -101,22 +100,63 @@ class KMeans:
                 sum_of_norms += np.linalg.norm(previous_means[k_idx] - self.means[k_idx])
             if sum_of_norms == 0:
                 break
-        print(self._eval_obj())
-        print(idx)
+        # print(self._eval_obj())
+        # print(idx)
 
 
-def main():
-    x = generatePoints(8, 2)
+def experimentFour():
+    x = generateClusterPoints(100, 2, scale=10)
     print(x)
     print('Mean and variance of each feature:', x.mean(axis=0), x.var(axis=0))
     # k_means = KMeans(x, 5, init='++')
-    k_means = KMeans(x, 4, init='random')
+    k_means = KMeans(x, 2, init='random')
 
     k_means.fit()
     means = k_means.means
     print(means)
-    plot_poincare_clustering(x, means)
+    plot_poincare_clustering(x, means, save_name='plots/experiment_4_clustering')
+
+
+def experimentFive():
+    x = generateClustersRandomly(k=2, scale=10, num_clusters=10, points_per_cluster=10)
+    print(x)
+    print('Mean and variance of each feature:', x.mean(axis=0), x.var(axis=0))
+    # k_means = KMeans(x, 5, init='++')
+    k_means = KMeans(x, 10, init='random')
+
+    k_means.fit()
+    means = k_means.means
+    print(means)
+    plot_poincare_clustering(x, means, save_name='plots/experiment_5_clustering')
+
+
+def experimentSix():
+    # Benchmark initialization schemes. Takes awhile to run...
+    points = 100
+    for dims in [5, 10, 15, 20]:
+        print('dimensions:', dims)
+        for num_clusters in [5, 10, 15, 20]:
+            random = []
+            plus_plus = []
+            x = generatePoints(points, k=dims, scale=10)
+
+            for _ in range(5):
+                k_means = KMeans(x, num_clusters, init='random')
+                k_means.fit()
+                random.append(k_means._eval_obj())
+                del k_means
+
+                k_means = KMeans(x, num_clusters, init='++')
+                k_means.fit()
+                plus_plus.append(k_means._eval_obj())
+                del k_means
+
+            print('clusters:', num_clusters)
+            print('random:', sum(random) / len(random))
+            print('++', sum(plus_plus) / len(plus_plus))
 
 
 if __name__ == '__main__':
-    main()
+    # experimentFour()
+    # experimentFive()
+    experimentSix()

@@ -25,6 +25,53 @@ def generatePoints(N, k=2, scale=1, same_quadrant=False):
     return np.array(point_list)
 
 
+def generateClusterPoints(N, k=2, scale=1):
+    """
+    Generate two clusters of points in H^2 by taking postive and negative octant of r3
+    :param N:
+    :param k:
+    :param scale:
+    :return:
+    """
+    rands = [[np.random.uniform(0, scale) * np.random.rand() for _ in range(k)] for i in range(N)]
+    rands += [[np.random.uniform(-scale, 0) * np.random.rand() for _ in range(k)] for i in range(N)]
+    point_list = []
+    for rand in rands:
+        # lastItem = math.sqrt(sum([1 + item**2 for item in rand]))
+        lastItem = math.sqrt(1 + np.dot(rand, rand))
+        rand.append(lastItem)
+        point_list.append(rand)
+    return np.array(point_list)
+
+
+def generateClustersRandomly(k=2, scale=1, num_clusters=1, points_per_cluster=20):
+    """
+    Generate clusters randomly by first choosing num_cluster random points and them sampling from within
+    hyperbolic distance 1 of each.
+    :param N:
+    :param k:
+    :param scale:
+    :return:
+    """
+    rands = [[np.random.uniform(-scale, scale) * np.random.rand() for _ in range(k)] for i in range(num_clusters)]
+    point_list = []
+    for rand in rands:
+        lastItem = math.sqrt(1 + np.dot(rand, rand))
+        rand.append(lastItem)
+        point_list.append(rand)
+        counter = 0
+        while counter < points_per_cluster:
+            nearCluster = np.array([np.random.uniform(-scale, scale) * np.random.rand() for _ in range(k)])
+            nearClusterLastItem = math.sqrt(1 + np.dot(nearCluster, nearCluster))
+            new_point = np.append(nearCluster, nearClusterLastItem)
+            # radius of hyperbolic ball is 0.2
+            if hyperboloidDist(new_point, rand) < .2:
+                point_list.append(new_point)
+                counter += 1
+
+    return np.array(point_list)
+
+
 def randTheta(k, scale=1):
     """
     Generates a random point on the hyperboloid
@@ -38,7 +85,7 @@ def minkowskiDot(point1, point2):
     point1 = list(point1)
     point2 = list(point2)
     MDP = sum([point1[i] * point2[i] for i in range(len(point1) - 1)]) - point1[-1] * point2[-1]
-    #return min(MDP, -(1 + 1e-10))
+    # return min(MDP, -(1 + 1e-10))
     return MDP
 
 
