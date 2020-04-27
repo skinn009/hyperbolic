@@ -256,9 +256,9 @@ def experimentTwo():
 def experimentThree():
     m = 200
     d = 2
-    points = generatePoints(m, k=d, scale=1)
+    points = generatePoints(m, k=d, scale=10)
     # theta = np.reshape(points[0, :], (d + 1, 1))
-    theta = randTheta(d, scale=1)
+    theta = randTheta(d, scale=10)
     loss_values_vanilla, cv = hyperGradDescent(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
     loss_values_armijo, ca = armijoGradDescent(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
     loss_values_bb, cb = barzeliaBowrein(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
