@@ -126,6 +126,46 @@ def barzeliaBowrein(loss_object, theta, maxEvals, gamma, X, verbosity=True):
     #     loss_values.append(loss_values[-1])
     return loss_values, centroid_list
 
+def nesterovAccGD(loss_object, theta, maxEvals, gamma, X, verbosity=True):
+    its = 1
+    loss_values = []
+    centroid_list = []
+    centroid_list.append(theta)
+    grad_norm = 1
+    prev_obj = loss_object(X, theta)
+    lam_prev = 0
+    alpha = 1 / la.norm(prev_obj.gradTangent)
+    y_prev = exponentialMap(-alpha * prev_obj.gradTangent, prev_obj.centroid)
+    while its <= maxEvals and grad_norm > 1e-4:
+        curr_obj = loss_object(X, y_prev)
+        #print(its, curr_obj.loss)
+        lam_cur = (1 + math.sqrt(1 + 4*lam_prev**2))/2
+        #print(lam_cur, lam_prev)
+        beta = (1-lam_prev)/lam_cur
+        while curr_obj.loss > prev_obj.loss - gamma * alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent):
+            alpha = alpha ** 2 * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent) \
+                    / (2 * (
+                        curr_obj.loss + alpha * np.dot(prev_obj.gradTangent.T, prev_obj.gradTangent) - prev_obj.loss))
+            theta_p = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
+            curr_obj = loss_object(X, theta_p)
+            its += 1
+            #print("alpha", alpha)
+        y_cur = exponentialMap(-alpha * curr_obj.gradTangent, curr_obj.centroid)
+        #print(y_cur)
+        theta = (1-beta)*y_cur + beta*y_prev
+        grad_norm = la.norm(curr_obj.gradTangent, np.inf)
+        if verbosity >= 1 and its%10 == 0:
+            print(its, curr_obj.loss, grad_norm, curr_obj.centroid.T)
+        its += 1
+        lam_prev = lam_cur
+        y_prev = y_cur
+        prev_obj = curr_obj
+        loss_values.append(curr_obj.loss)
+        centroid_list.append(theta)
+
+
+    return loss_values, centroid_list
+
 
 def exponentialMap(grad, p):
     """
@@ -215,7 +255,7 @@ def experimentTwo():
 
 def experimentThree():
     m = 1000
-    d = 80
+    d = 8
     points = generatePoints(m, k=d)
     theta = np.reshape(points[0, :], (d + 1, 1))
     loss_values_vanilla, _ = hyperGradDescent(HyperGradLoss, theta, 100, 0.1, points, True)
@@ -256,8 +296,16 @@ def testing():
     plot_poincare(points, centroid_list, save_name='plots/barzelia_sample.png')
     plot_loss({'barzeliaBowrein- grad descent': loss_values}, 'plots/vanilla_barzelia.png')
 
+    loss_values, centroid_list = nesterovAccGD(HyperGradLoss, theta, 100, .1, points, True)
+    plot_poincare(points, centroid_list, save_name='plots/nesterov.png')
+    plot_loss({'Nesterov accelerated- grad descent': loss_values}, 'plots/vanilla_nestrov.png')
+
 
 if __name__ == '__main__':
     # experimentOne()
     # experimentTwo()
-    experimentThree()
+    #experimentThree()
+    testing()
+
+
+
