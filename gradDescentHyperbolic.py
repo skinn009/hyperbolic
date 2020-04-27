@@ -254,21 +254,30 @@ def experimentTwo():
 
 
 def experimentThree():
-    m = 2000
-    d = 20
-    points = generatePoints(m, k=d, scale=10)
+    m = 200
+    d = 2
+    points = generatePoints(m, k=d, scale=1)
     # theta = np.reshape(points[0, :], (d + 1, 1))
-    theta = randTheta(d, scale=10)
-    loss_values_vanilla, _ = hyperGradDescent(HyperGradLoss, theta.copy(), 500, 1e-1, points, True)
-    loss_values_armijo, _ = armijoGradDescent(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
-    loss_values_bb, _ = barzeliaBowrein(HyperGradLoss, theta.copy(), 500, 1e-4, points, True)
-    loss_values_agd, _ = nesterovAccGD(HyperGradLoss, theta.copy(), 500, 1e-3, points, True)
+    theta = randTheta(d, scale=1)
+    loss_values_vanilla, cv = hyperGradDescent(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
+    loss_values_armijo, ca = armijoGradDescent(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
+    loss_values_bb, cb = barzeliaBowrein(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
+    loss_values_agd, cagd = nesterovAccGD(HyperGradLoss, theta.copy(), 500, 0.1, points, True)
     plot_loss({'Barzelia-Bowrein': loss_values_bb,
                'Vanilla': loss_values_vanilla,
                'Armijo Vanilla': loss_values_armijo,
                'Nesterov AGD': loss_values_agd},
               'plots/experiment_3_loss_comparison.png')
 
+    plot_poincare(points, centroid_list=cv, save_name='plots/experiment_3_vanilla.png')
+    plot_poincare(points, centroid_list=ca, save_name='plots/experiment_3_armijo.png')
+    plot_poincare(points, centroid_list=cb, save_name='plots/experiment_3_bb.png')
+    plot_poincare(points, centroid_list=cagd, save_name='plots/experiment_3_agd.png')
+
+    print(cv[-1])
+    print(ca[-1])
+    print(cb[-1])
+    print(cagd[-1])
 
 def testing():
     points = generatePoints(200)

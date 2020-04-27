@@ -183,11 +183,11 @@ def plot_poincare(points, centroid_list=None, save_name='plots/poincare.png'):
     poincare_centroids = np.array([hyperbolic_to_poincare(centroid_list[idx]) for idx in range(len(centroid_list))])
 
     fig = plt.figure()
+    plt.scatter(poincare_points[:, 0], poincare_points[:, 1], c='green')
     if poincare_centroids is not None:
         plt.scatter(poincare_centroids[:-1, 0], poincare_centroids[:-1, 1], c='orange')
         # plot the final centroid in red
         plt.scatter(poincare_centroids[-1, 0], poincare_centroids[-1, 1], c='red')
-    plt.scatter(poincare_points[:, 0], poincare_points[:, 1], c='green')
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     circle = plt.Circle((0, 0), 1, color='black', fill=False)
